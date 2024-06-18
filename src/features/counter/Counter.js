@@ -16,11 +16,17 @@ export function Counter() {
   };
 
   const onStart = () => {
-    setRunning(true);
+    if (!taskName) {
+      alert("Name your task before starting the timer!");
+    } else {
+      setRunning(true);
+    }
   };
 
   const onStop = () => {
-    setRunning(false);
+    if (running) {
+      setRunning(false);
+    }
   };
 
   useEffect(() => {
@@ -48,20 +54,22 @@ export function Counter() {
         <button onClick={onStart}>Start</button>
         <button onClick={onStop}>Stop</button>
       </div>
-      <div className="table">
-        <table>
-          <tbody>
-            <tr>
-              <th>Task</th>
-              <th>Time Required</th>
-            </tr>
-            <tr>
-              <td>{taskName}</td>
-              <td>{time}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      {taskName && (
+        <div className="table">
+          <table>
+            <tbody>
+              <tr>
+                <th>Task</th>
+                <th>Time Required</th>
+              </tr>
+              <tr>
+                <td>{taskName}</td>
+                <td>{time}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
