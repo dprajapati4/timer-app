@@ -1,28 +1,65 @@
-import React, { useState } from "react";
-
 import styles from "./Counter.module.css";
+import React, { useState, useEffect } from "react";
 
 export function Counter() {
+  const [taskName, setTaskName] = useState("");
+  const [time, setTime] = useState(0);
+  const [running, setRunning] = useState(false);
+
+  const onChangeName = (e) => {
+    e.preventDefault();
+    setTaskName(e.target.value);
+  };
+  const onChangeTime = (e) => {
+    e.preventDefault();
+    setTime(e.target.value);
+  };
+
+  const onStart = () => {
+    setRunning(true);
+  };
+
+  const onStop = () => {
+    setRunning(false);
+  };
+
+  useEffect(() => {
+    let intervalId;
+
+    if (running) {
+      intervalId = setInterval(() => {
+        setTime((prevTime) => prevTime + 1);
+      }, 1000);
+    } else if (!running && time !== 0) {
+      clearInterval(intervalId);
+    }
+
+    return () => clearInterval(intervalId);
+  }, [running, time]);
+  console.log({ taskName, time, running });
+
   return (
     <div className={styles.counter}>
       <div className={styles.input}>
-        <label for="task">Task</label>
-        <input type="text" />
-        <label for="time">Time:</label>
-        <input type="number" min={0} />
-        <button>Start</button>
-        <button>Stop</button>
+        <label htmlFor="task">Task</label>
+        <input type="text" value={taskName} onChange={onChangeName} />
+        <label htmlFor="time">Time:</label>
+        <input type="number" min={0} value={time} onChange={onChangeTime} />
+        <button onClick={onStart}>Start</button>
+        <button onClick={onStop}>Stop</button>
       </div>
       <div className="table">
         <table>
-          <tr>
-            <th>Task</th>
-            <th>Time Required</th>
-          </tr>
-          <tr>
-            <td>Test 1</td>
-            <td>4</td>
-          </tr>
+          <tbody>
+            <tr>
+              <th>Task</th>
+              <th>Time Required</th>
+            </tr>
+            <tr>
+              <td>{taskName}</td>
+              <td>{time}</td>
+            </tr>
+          </tbody>
         </table>
       </div>
     </div>
