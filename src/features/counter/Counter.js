@@ -1,10 +1,15 @@
 import styles from "./Counter.module.css";
 import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { addedTask } from "./taskSlice";
 
 export function Counter() {
   const [taskName, setTaskName] = useState("");
   const [time, setTime] = useState(0);
   const [running, setRunning] = useState(false);
+
+  const tasks = useSelector((state) => state.tasks);
+  const dispatch = useDispatch();
 
   const onChangeName = (e) => {
     e.preventDefault();
@@ -26,6 +31,9 @@ export function Counter() {
   const onStop = () => {
     if (running) {
       setRunning(false);
+      if(taskName){
+        dispatch(addedTask({taskName, time}))
+      }
     }
   };
 
@@ -42,7 +50,7 @@ export function Counter() {
 
     return () => clearInterval(intervalId);
   }, [running, time]);
-  console.log({ taskName, time, running });
+  console.log(tasks);
 
   return (
     <div className={styles.counter}>
@@ -54,7 +62,7 @@ export function Counter() {
         <button onClick={onStart}>Start</button>
         <button onClick={onStop}>Stop</button>
       </div>
-      {taskName && (
+      {tasks && (
         <div className="table">
           <table>
             <tbody>
@@ -62,10 +70,12 @@ export function Counter() {
                 <th>Task</th>
                 <th>Time Required</th>
               </tr>
-              <tr>
-                <td>{taskName}</td>
-                <td>{time}</td>
-              </tr>
+              {tasks.map((task, index) => (
+                <tr key={index}>
+                  <td>{task.taskName}</td>
+                  <td>{task.time}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
